@@ -134,14 +134,14 @@ local function CreateTab(name, pos)
     tab.Name = "Tab"
     tab.Position = UDim2.new(0, 14, 0, pos)
     tab.AutoButtonColor = false
-    
+
     local stroke = Instance.new("UIStroke")
     stroke.Parent = tab
     stroke.Color = Color3.fromRGB(113, 113, 113)
-    
+
     table.insert(Tabs, tab)
     TabElements[name] = {}
-    
+
     tab.MouseEnter:Connect(function()
         if tab.BackgroundColor3 ~= Color3.fromRGB(255, 119, 33) then
             TweenService:Create(tab, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
@@ -152,7 +152,7 @@ local function CreateTab(name, pos)
             TweenService:Create(tab, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}):Play()
         end
     end)
-    
+
     tab.MouseButton1Click:Connect(function()
         for _, t in pairs(Tabs) do
             TweenService:Create(t, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}):Play()
@@ -161,20 +161,20 @@ local function CreateTab(name, pos)
         TweenService:Create(tab, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(255, 119, 33)}):Play()
         tab.TextColor3 = Color3.fromRGB(255, 255, 255)
         CurrentTab = name
-        
+
         for _, child in pairs(ScrollingFrame:GetChildren()) do
             if child:IsA("TextButton") or child:IsA("TextLabel") or child:IsA("Frame") then
                 child.Visible = false
                 child.Parent = nil
             end
         end
-        
+
         for _, element in pairs(TabElements[name]) do
             element.Visible = true
             element.Parent = ScrollingFrame
         end
     end)
-    
+
     return tab
 end
 
@@ -190,11 +190,11 @@ local function CreateButton(text, callback)
     btn.Text = text
     btn.Name = "ButtonElement"
     btn.AutoButtonColor = false
-    
+
     local stroke = Instance.new("UIStroke")
     stroke.Parent = btn
     stroke.Color = Color3.fromRGB(113, 113, 113)
-    
+
     btn.MouseEnter:Connect(function()
         TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(80, 80, 80), Size = UDim2.new(0, 275, 0, 36)}):Play()
     end)
@@ -207,7 +207,7 @@ local function CreateButton(text, callback)
         TweenService:Create(btn, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(54, 54, 54)}):Play()
         if callback then callback() end
     end)
-    
+
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], btn)
     end
@@ -226,24 +226,24 @@ local function CreateToggle(text, default, callback)
     toggle.Text = text
     toggle.Name = "ToggleElement"
     toggle.AutoButtonColor = false
-    
+
     local stroke = Instance.new("UIStroke")
     stroke.Parent = toggle
     stroke.Color = Color3.fromRGB(113, 113, 113)
-    
+
     local indicator = Instance.new("Frame")
     indicator.Parent = toggle
     indicator.BorderSizePixel = 0
     indicator.BackgroundColor3 = default and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(106, 0, 0)
     indicator.Size = UDim2.new(0, 28, 0, 28)
     indicator.Position = UDim2.new(0, 238, 0, 4)
-    
+
     local indicatorStroke = Instance.new("UIStroke")
     indicatorStroke.Parent = indicator
     indicatorStroke.Color = Color3.fromRGB(79, 79, 79)
-    
+
     local state = default or false
-    
+
     toggle.MouseEnter:Connect(function()
         TweenService:Create(toggle, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}):Play()
     end)
@@ -255,7 +255,7 @@ local function CreateToggle(text, default, callback)
         TweenService:Create(indicator, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = state and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(106, 0, 0)}):Play()
         if callback then callback(state) end
     end)
-    
+
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], toggle)
     end
@@ -276,7 +276,7 @@ local function CreateLabel(text)
     label.Text = text
     label.Name = "LabelElement"
     label.Position = UDim2.new(0, 28, 0, 20)
-    
+
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], label)
     end
@@ -289,7 +289,7 @@ local function CreateCopyLabel(text)
     container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
     container.Size = UDim2.new(0, 270, 0, 30)
     container.BackgroundTransparency = 1
-    
+
     local label = Instance.new("TextLabel")
     label.Parent = container
     label.TextWrapped = true
@@ -305,7 +305,7 @@ local function CreateCopyLabel(text)
     label.Name = "CopyLabel"
     label.Position = UDim2.new(0, 0, 0, 5)
     label.TextXAlignment = Enum.TextXAlignment.Left
-    
+
     local copyBtn = Instance.new("TextButton")
     copyBtn.Parent = container
     copyBtn.BorderSizePixel = 0
@@ -317,11 +317,11 @@ local function CreateCopyLabel(text)
     copyBtn.Position = UDim2.new(0, 220, 0, 3)
     copyBtn.Text = "Copy"
     copyBtn.Name = "CopyButton"
-    
+
     local copyStroke = Instance.new("UIStroke")
     copyStroke.Parent = copyBtn
     copyStroke.Color = Color3.fromRGB(113, 113, 113)
-    
+
     copyBtn.MouseEnter:Connect(function()
         TweenService:Create(copyBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
     end)
@@ -334,7 +334,7 @@ local function CreateCopyLabel(text)
         task.wait(1)
         TweenService:Create(copyBtn, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Text = "Copy"}):Play()
     end)
-    
+
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], container)
     end
@@ -347,7 +347,7 @@ local function CreateDropdown(text, options, default, callback)
     container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
     container.Size = UDim2.new(0, 270, 0, 36)
     container.BackgroundTransparency = 1
-    
+
     local dropdown = Instance.new("TextButton")
     dropdown.Parent = container
     dropdown.TextWrapped = true
@@ -360,11 +360,11 @@ local function CreateDropdown(text, options, default, callback)
     dropdown.Text = text .. ": " .. (default or options[1])
     dropdown.Name = "DropdownElement"
     dropdown.AutoButtonColor = false
-    
+
     local stroke = Instance.new("UIStroke")
     stroke.Parent = dropdown
     stroke.Color = Color3.fromRGB(113, 113, 113)
-    
+
     local arrow = Instance.new("TextLabel")
     arrow.Parent = dropdown
     arrow.BorderSizePixel = 0
@@ -375,21 +375,21 @@ local function CreateDropdown(text, options, default, callback)
     arrow.Position = UDim2.new(1, -35, 0, 3)
     arrow.Text = "v"
     arrow.TextSize = 20
-    
+
     local expanded = false
     local selected = default or options[1]
     local optionButtons = {}
-    
+
     local function updateText()
         dropdown.Text = text .. ": " .. selected
     end
-    
+
     local function createOptions()
         for _, opt in pairs(optionButtons) do
             opt:Destroy()
         end
         optionButtons = {}
-        
+
         if expanded then
             local y = 36
             for _, option in pairs(options) do
@@ -406,11 +406,11 @@ local function CreateDropdown(text, options, default, callback)
                 optBtn.Text = option
                 optBtn.Name = "DropdownOption"
                 optBtn.AutoButtonColor = false
-                
+
                 local optStroke = Instance.new("UIStroke")
                 optStroke.Parent = optBtn
                 optStroke.Color = Color3.fromRGB(113, 113, 113)
-                
+
                 optBtn.MouseEnter:Connect(function()
                     TweenService:Create(optBtn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
                 end)
@@ -429,14 +429,14 @@ local function CreateDropdown(text, options, default, callback)
                     end
                     optionButtons = {}
                 end)
-                
+
                 table.insert(optionButtons, optBtn)
                 y = y + 28
             end
             TweenService:Create(container, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 270, 0, y)}):Play()
         end
     end
-    
+
     dropdown.MouseEnter:Connect(function()
         TweenService:Create(dropdown, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}):Play()
     end)
@@ -448,7 +448,7 @@ local function CreateDropdown(text, options, default, callback)
         arrow.Text = expanded and "^" or "v"
         createOptions()
     end)
-    
+
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], container)
     end
@@ -461,7 +461,7 @@ local function CreateSlider(text, min, max, default, callback)
     container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
     container.Size = UDim2.new(0, 270, 0, 50)
     container.BackgroundTransparency = 1
-    
+
     local label = Instance.new("TextLabel")
     label.Parent = container
     label.BorderSizePixel = 0
@@ -473,22 +473,24 @@ local function CreateSlider(text, min, max, default, callback)
     label.Text = text .. ": " .. tostring(default)
     label.TextSize = 14
     label.TextXAlignment = Enum.TextXAlignment.Left
-    
-    local track = Instance.new("Frame")
+
+    local track = Instance.new("TextButton")
     track.Parent = container
     track.BorderSizePixel = 0
     track.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     track.Size = UDim2.new(0, 250, 0, 6)
     track.Position = UDim2.new(0, 10, 0, 24)
-    
+    track.Text = ""
+    track.AutoButtonColor = false
+
     local fill = Instance.new("Frame")
     fill.Parent = track
     fill.BorderSizePixel = 0
     fill.BackgroundColor3 = Color3.fromRGB(255, 119, 33)
     fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-    
+
     local value = default
-    
+
     local function updateSlider(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement then
             local relativeX = math.clamp((input.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X, 0, 1)
@@ -499,14 +501,14 @@ local function CreateSlider(text, min, max, default, callback)
             if callback then callback(value) end
         end
     end
-    
+
     track.MouseEnter:Connect(function()
         TweenService:Create(track, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
     end)
     track.MouseLeave:Connect(function()
         TweenService:Create(track, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
     end)
-    
+
     track.MouseButton1Down:Connect(function()
         local connection = game:GetService("UserInputService").InputChanged:Connect(updateSlider)
         local releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(input)
@@ -516,7 +518,7 @@ local function CreateSlider(text, min, max, default, callback)
             end
         end)
     end)
-    
+
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], container)
     end
@@ -535,14 +537,14 @@ local function CreateKeybind(text, default, callback)
     keybind.Text = text .. ": " .. tostring(default)
     keybind.Name = "KeybindElement"
     keybind.AutoButtonColor = false
-    
+
     local stroke = Instance.new("UIStroke")
     stroke.Parent = keybind
     stroke.Color = Color3.fromRGB(113, 113, 113)
-    
+
     local listening = false
     local currentKey = default
-    
+
     keybind.MouseEnter:Connect(function()
         TweenService:Create(keybind, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(80, 80, 80)}):Play()
     end)
@@ -567,7 +569,7 @@ local function CreateKeybind(text, default, callback)
             end)
         end
     end)
-    
+
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], keybind)
     end
@@ -580,7 +582,7 @@ local function CreateColorPicker(text, default, callback)
     container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
     container.Size = UDim2.new(0, 270, 0, 40)
     container.BackgroundTransparency = 1
-    
+
     local label = Instance.new("TextLabel")
     label.Parent = container
     label.BorderSizePixel = 0
@@ -592,7 +594,7 @@ local function CreateColorPicker(text, default, callback)
     label.Text = text
     label.TextSize = 14
     label.TextXAlignment = Enum.TextXAlignment.Left
-    
+
     local colorBtn = Instance.new("TextButton")
     colorBtn.Parent = container
     colorBtn.BorderSizePixel = 0
@@ -604,11 +606,11 @@ local function CreateColorPicker(text, default, callback)
     colorBtn.Position = UDim2.new(0, 220, 0, 8)
     colorBtn.Text = ""
     colorBtn.Name = "ColorPicker"
-    
+
     local colorStroke = Instance.new("UIStroke")
     colorStroke.Parent = colorBtn
     colorStroke.Color = Color3.fromRGB(113, 113, 113)
-    
+
     local colorPickerFrame = Instance.new("Frame")
     colorPickerFrame.Parent = container
     colorPickerFrame.BorderSizePixel = 0
@@ -617,27 +619,27 @@ local function CreateColorPicker(text, default, callback)
     colorPickerFrame.Position = UDim2.new(0, 0, 0, 30)
     colorPickerFrame.Visible = false
     colorPickerFrame.ClipsDescendants = true
-    
+
     local colorPickerStroke = Instance.new("UIStroke")
     colorPickerStroke.Parent = colorPickerFrame
     colorPickerStroke.Color = Color3.fromRGB(113, 113, 113)
-    
+
     local colorGrid = Instance.new("Frame")
     colorGrid.Parent = colorPickerFrame
     colorGrid.BorderSizePixel = 0
     colorGrid.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     colorGrid.Size = UDim2.new(1, -10, 1, -10)
     colorGrid.Position = UDim2.new(0, 5, 0, 5)
-    
+
     local colorGridLayout = Instance.new("UIGridLayout")
     colorGridLayout.Parent = colorGrid
     colorGridLayout.CellSize = UDim2.new(0, 30, 0, 30)
     colorGridLayout.CellPadding = UDim2.new(0, 4, 0, 4)
     colorGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    
+
     local colorExpanded = false
     local selectedColor = default or Color3.fromRGB(255, 255, 255)
-    
+
     colorBtn.MouseButton1Click:Connect(function()
         colorExpanded = not colorExpanded
         colorPickerFrame.Visible = true
@@ -645,7 +647,7 @@ local function CreateColorPicker(text, default, callback)
         TweenService:Create(colorPickerFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 220, 0, size)}):Play()
         TweenService:Create(container, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 270, 0, colorExpanded and 190 or 40)}):Play()
     end)
-    
+
     local colorPresets = {
         Color3.fromRGB(255, 0, 0),
         Color3.fromRGB(255, 119, 33),
@@ -660,7 +662,7 @@ local function CreateColorPicker(text, default, callback)
         Color3.fromRGB(0, 0, 0),
         Color3.fromRGB(255, 200, 200)
     }
-    
+
     for _, color in pairs(colorPresets) do
         local colorBtn2 = Instance.new("TextButton")
         colorBtn2.Parent = colorGrid
@@ -669,11 +671,11 @@ local function CreateColorPicker(text, default, callback)
         colorBtn2.Size = UDim2.new(0, 30, 0, 30)
         colorBtn2.Text = ""
         colorBtn2.AutoButtonColor = false
-        
+
         local colorBtn2Stroke = Instance.new("UIStroke")
         colorBtn2Stroke.Parent = colorBtn2
         colorBtn2Stroke.Color = Color3.fromRGB(79, 79, 79)
-        
+
         colorBtn2.MouseEnter:Connect(function()
             TweenService:Create(colorBtn2, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 34, 0, 34)}):Play()
         end)
@@ -691,7 +693,7 @@ local function CreateColorPicker(text, default, callback)
             colorPickerFrame.Visible = false
         end)
     end
-    
+
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], container)
     end
