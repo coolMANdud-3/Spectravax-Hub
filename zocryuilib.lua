@@ -102,6 +102,31 @@ UIListLayout.Parent = ScrollingFrame
 UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
+local DraggableButton = Instance.new("ImageButton")
+DraggableButton.Parent = ScreenGui
+DraggableButton.BorderSizePixel = 0
+DraggableButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+DraggableButton.Image = "rbxassetid://123311667009287"
+DraggableButton.Size = UDim2.new(0, 60, 0, 60)
+DraggableButton.Name = "DraggableButton"
+DraggableButton.Position = UDim2.new(0, 38, 0, 98)
+DraggableButton.Visible = false
+DraggableButton.BackgroundTransparency = 1
+
+local ButtonStroke = Instance.new("UIStroke")
+ButtonStroke.Parent = DraggableButton
+ButtonStroke.Thickness = 2
+ButtonStroke.Color = Color3.fromRGB(255, 117, 63)
+
+local DraggableButtonConfig = {
+    Image = "rbxassetid://123311667009287",
+    StrokeColor = Color3.fromRGB(255, 117, 63),
+    StrokeThickness = 2,
+    Size = UDim2.new(0, 60, 0, 60),
+    Position = UDim2.new(0, 38, 0, 98),
+    Visible = false
+}
+
 local Tabs = {}
 local TabElements = {}
 local CurrentTab = nil
@@ -723,15 +748,101 @@ local function CreateColorPicker(text, default, callback)
     return container
 end
 
+local function UpdateDraggableButton()
+    DraggableButton.Image = DraggableButtonConfig.Image
+    ButtonStroke.Color = DraggableButtonConfig.StrokeColor
+    ButtonStroke.Thickness = DraggableButtonConfig.StrokeThickness
+    DraggableButton.Size = DraggableButtonConfig.Size
+    DraggableButton.Position = DraggableButtonConfig.Position
+    DraggableButton.Visible = DraggableButtonConfig.Visible
+end
+
+local function SetDraggableButton(config)
+    if config.Image then
+        DraggableButtonConfig.Image = config.Image
+        DraggableButton.Image = config.Image
+    end
+    if config.StrokeColor then
+        DraggableButtonConfig.StrokeColor = config.StrokeColor
+        ButtonStroke.Color = config.StrokeColor
+    end
+    if config.StrokeThickness then
+        DraggableButtonConfig.StrokeThickness = config.StrokeThickness
+        ButtonStroke.Thickness = config.StrokeThickness
+    end
+    if config.Size then
+        DraggableButtonConfig.Size = config.Size
+        DraggableButton.Size = config.Size
+    end
+    if config.Position then
+        DraggableButtonConfig.Position = config.Position
+        DraggableButton.Position = config.Position
+    end
+    if config.Visible ~= nil then
+        DraggableButtonConfig.Visible = config.Visible
+        DraggableButton.Visible = config.Visible
+    end
+end
+
+local dragging = false
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    DraggableButton.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
+    DraggableButtonConfig.Position = DraggableButton.Position
+end
+
+DraggableButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = DraggableButton.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        update(input)
+    end
+end)
+
 MinimizeButton.MouseButton1Click:Connect(function()
     minimized = not minimized
     if minimized then
         TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 412, 0, 30)}):Play()
         MinimizeButton.Text = "+"
+        DraggableButton.Visible = true
+        DraggableButton.BackgroundTransparency = 0
+        DraggableButtonConfig.Visible = true
     else
         TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = originalSize}):Play()
         MinimizeButton.Text = "−"
+        DraggableButton.Visible = false
+        DraggableButton.BackgroundTransparency = 1
+        DraggableButtonConfig.Visible = false
     end
+end)
+
+DraggableButton.MouseButton1Click:Connect(function()
+    minimized = false
+    TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = originalSize}):Play()
+    MinimizeButton.Text = "−"
+    DraggableButton.Visible = false
+    DraggableButton.BackgroundTransparency = 1
+    DraggableButtonConfig.Visible = false
 end)
 
 FullscreenButton.MouseButton1Click:Connect(function()
@@ -771,5 +882,9 @@ return {
     CurrentTab = CurrentTab,
     ThemeColors = ThemeColors,
     CurrentTheme = CurrentTheme,
-    TweenService = TweenService
+    TweenService = TweenService,
+    DraggableButton = DraggableButton,
+    DraggableButtonConfig = DraggableButtonConfig,
+    SetDraggableButton = SetDraggableButton,
+    UpdateDraggableButton = UpdateDraggableButton
 }
