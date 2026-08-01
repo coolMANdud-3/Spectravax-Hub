@@ -161,24 +161,33 @@ local function CreateTab(name, pos)
         TweenService:Create(tab, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(255, 119, 33)}):Play()
         tab.TextColor3 = Color3.fromRGB(255, 255, 255)
         CurrentTab = name
-
+        
         for _, child in pairs(ScrollingFrame:GetChildren()) do
             if child:IsA("TextButton") or child:IsA("TextLabel") or child:IsA("Frame") then
                 child.Visible = false
                 child.Parent = nil
             end
         end
-
-        for _, element in pairs(TabElements[name]) do
-            element.Visible = true
-            element.Parent = ScrollingFrame
+        
+        if TabElements[name] then
+            for _, element in pairs(TabElements[name]) do
+                element.Visible = true
+                element.Parent = ScrollingFrame
+            end
         end
     end)
 
+    if not CurrentTab then
+        CurrentTab = name
+        tab.BackgroundColor3 = Color3.fromRGB(255, 119, 33)
+    end
+    
     return tab
 end
 
 local function CreateButton(text, callback)
+    if not CurrentTab then return end
+    
     local btn = Instance.new("TextButton")
     btn.TextWrapped = true
     btn.BorderSizePixel = 0
@@ -215,6 +224,8 @@ local function CreateButton(text, callback)
 end
 
 local function CreateToggle(text, default, callback)
+    if not CurrentTab then return end
+    
     local toggle = Instance.new("TextButton")
     toggle.TextWrapped = true
     toggle.BorderSizePixel = 0
@@ -263,6 +274,8 @@ local function CreateToggle(text, default, callback)
 end
 
 local function CreateLabel(text)
+    if not CurrentTab then return end
+    
     local label = Instance.new("TextLabel")
     label.TextWrapped = true
     label.ZIndex = 2
@@ -284,6 +297,8 @@ local function CreateLabel(text)
 end
 
 local function CreateCopyLabel(text)
+    if not CurrentTab then return end
+    
     local container = Instance.new("Frame")
     container.BorderSizePixel = 0
     container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
@@ -342,6 +357,8 @@ local function CreateCopyLabel(text)
 end
 
 local function CreateDropdown(text, options, default, callback)
+    if not CurrentTab then return end
+    
     local container = Instance.new("Frame")
     container.BorderSizePixel = 0
     container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
@@ -456,6 +473,8 @@ local function CreateDropdown(text, options, default, callback)
 end
 
 local function CreateSlider(text, min, max, default, callback)
+    if not CurrentTab then return end
+    
     local container = Instance.new("Frame")
     container.BorderSizePixel = 0
     container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
@@ -526,6 +545,8 @@ local function CreateSlider(text, min, max, default, callback)
 end
 
 local function CreateKeybind(text, default, callback)
+    if not CurrentTab then return end
+    
     local keybind = Instance.new("TextButton")
     keybind.TextWrapped = true
     keybind.BorderSizePixel = 0
@@ -577,6 +598,8 @@ local function CreateKeybind(text, default, callback)
 end
 
 local function CreateColorPicker(text, default, callback)
+    if not CurrentTab then return end
+    
     local container = Instance.new("Frame")
     container.BorderSizePixel = 0
     container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
