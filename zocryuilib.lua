@@ -146,6 +146,18 @@ local ThemeColors = {
 }
 local CurrentTheme = "Orange"
 
+local function UpdateCanvas()
+    local totalHeight = 0
+    for _, child in pairs(ScrollingFrame:GetChildren()) do
+        if child:IsA("TextButton") or child:IsA("TextLabel") or child:IsA("Frame") then
+            if child.Visible then
+                totalHeight = totalHeight + child.Size.Y.Offset + 6
+            end
+        end
+    end
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
+end
+
 local function CreateTab(name, pos)
     local tab = Instance.new("TextButton")
     tab.Parent = MainFrame
@@ -200,6 +212,7 @@ local function CreateTab(name, pos)
                 element.Parent = ScrollingFrame
             end
         end
+        UpdateCanvas()
     end)
 
     if not CurrentTab then
@@ -245,6 +258,7 @@ local function CreateButton(text, callback)
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], btn)
     end
+    UpdateCanvas()
     return btn
 end
 
@@ -295,6 +309,7 @@ local function CreateToggle(text, default, callback)
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], toggle)
     end
+    UpdateCanvas()
     return toggle
 end
 
@@ -310,14 +325,16 @@ local function CreateLabel(text)
     label.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
     label.TextColor3 = Color3.fromRGB(255, 255, 255)
     label.BackgroundTransparency = 1
-    label.Size = UDim2.new(0, 116, 0, 20)
+    label.Size = UDim2.new(0, 270, 0, 20)
     label.Text = text
     label.Name = "LabelElement"
-    label.Position = UDim2.new(0, 28, 0, 20)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.TextXAlignment = Enum.TextXAlignment.Center
 
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], label)
     end
+    UpdateCanvas()
     return label
 end
 
@@ -378,6 +395,7 @@ local function CreateCopyLabel(text)
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], container)
     end
+    UpdateCanvas()
     return container
 end
 
@@ -470,12 +488,14 @@ local function CreateDropdown(text, options, default, callback)
                         btn:Destroy()
                     end
                     optionButtons = {}
+                    UpdateCanvas()
                 end)
 
                 table.insert(optionButtons, optBtn)
                 y = y + 28
             end
             TweenService:Create(container, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 270, 0, y)}):Play()
+            UpdateCanvas()
         end
     end
 
@@ -494,79 +514,8 @@ local function CreateDropdown(text, options, default, callback)
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], container)
     end
+    UpdateCanvas()
     return dropdown
-end
-
-local function CreateSlider(text, min, max, default, callback)
-    if not CurrentTab then return end
-    
-    local container = Instance.new("Frame")
-    container.BorderSizePixel = 0
-    container.BackgroundColor3 = Color3.fromRGB(13, 13, 13)
-    container.Size = UDim2.new(0, 270, 0, 50)
-    container.BackgroundTransparency = 1
-
-    local label = Instance.new("TextLabel")
-    label.Parent = container
-    label.BorderSizePixel = 0
-    label.BackgroundTransparency = 1
-    label.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-    label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.Size = UDim2.new(0, 200, 0, 20)
-    label.Position = UDim2.new(0, 0, 0, 0)
-    label.Text = text .. ": " .. tostring(default)
-    label.TextSize = 14
-    label.TextXAlignment = Enum.TextXAlignment.Left
-
-    local track = Instance.new("TextButton")
-    track.Parent = container
-    track.BorderSizePixel = 0
-    track.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    track.Size = UDim2.new(0, 250, 0, 6)
-    track.Position = UDim2.new(0, 10, 0, 24)
-    track.Text = ""
-    track.AutoButtonColor = false
-
-    local fill = Instance.new("Frame")
-    fill.Parent = track
-    fill.BorderSizePixel = 0
-    fill.BackgroundColor3 = Color3.fromRGB(255, 119, 33)
-    fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-
-    local value = default
-
-    local function updateSlider(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            local relativeX = math.clamp((input.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X, 0, 1)
-            value = math.round(min + (relativeX * (max - min)))
-            value = math.clamp(value, min, max)
-            TweenService:Create(fill, TweenInfo.new(0.1, Enum.EasingStyle.Quad), {Size = UDim2.new((value - min) / (max - min), 0, 1, 0)}):Play()
-            label.Text = text .. ": " .. tostring(value)
-            if callback then callback(value) end
-        end
-    end
-
-    track.MouseEnter:Connect(function()
-        TweenService:Create(track, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
-    end)
-    track.MouseLeave:Connect(function()
-        TweenService:Create(track, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
-    end)
-
-    track.MouseButton1Down:Connect(function()
-        local connection = game:GetService("UserInputService").InputChanged:Connect(updateSlider)
-        local releaseConnection = game:GetService("UserInputService").InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                connection:Disconnect()
-                releaseConnection:Disconnect()
-            end
-        end)
-    end)
-
-    if TabElements[CurrentTab] then
-        table.insert(TabElements[CurrentTab], container)
-    end
-    return container
 end
 
 local function CreateKeybind(text, default, callback)
@@ -619,6 +568,7 @@ local function CreateKeybind(text, default, callback)
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], keybind)
     end
+    UpdateCanvas()
     return keybind
 end
 
@@ -694,6 +644,7 @@ local function CreateColorPicker(text, default, callback)
         local size = colorExpanded and 150 or 0
         TweenService:Create(colorPickerFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 220, 0, size)}):Play()
         TweenService:Create(container, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 270, 0, colorExpanded and 190 or 40)}):Play()
+        UpdateCanvas()
     end)
 
     local colorPresets = {
@@ -739,12 +690,14 @@ local function CreateColorPicker(text, default, callback)
             TweenService:Create(container, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 270, 0, 40)}):Play()
             task.wait(0.3)
             colorPickerFrame.Visible = false
+            UpdateCanvas()
         end)
     end
 
     if TabElements[CurrentTab] then
         table.insert(TabElements[CurrentTab], container)
     end
+    UpdateCanvas()
     return container
 end
 
@@ -871,7 +824,6 @@ return {
     CreateLabel = CreateLabel,
     CreateCopyLabel = CreateCopyLabel,
     CreateDropdown = CreateDropdown,
-    CreateSlider = CreateSlider,
     CreateKeybind = CreateKeybind,
     CreateColorPicker = CreateColorPicker,
     ScreenGui = ScreenGui,
@@ -886,5 +838,6 @@ return {
     DraggableButton = DraggableButton,
     DraggableButtonConfig = DraggableButtonConfig,
     SetDraggableButton = SetDraggableButton,
-    UpdateDraggableButton = UpdateDraggableButton
+    UpdateDraggableButton = UpdateDraggableButton,
+    UpdateCanvas = UpdateCanvas
 }
