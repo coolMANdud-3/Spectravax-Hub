@@ -15,10 +15,10 @@ Ocean={8,20,32,16,38,55,0,170,255,240,250,255,145,185,205},
 Purple={22,12,32,40,20,55,175,80,255,250,240,255,185,155,205},
 Emerald={7,25,17,14,48,32,35,215,125,235,255,245,145,190,165},
 Crimson={30,8,11,52,15,20,255,55,65,255,240,240,200,150,155},
-Sunset={35,17,8,58,29,14,255,125,35,255,245,230,205},
+Sunset={35,17,8,58,29,14,255,125,35,255,245,230,205,170,140},
 Pink={32,9,22,55,17,38,255,75,165,255,240,250,200,150,180},
 Cyan={6,25,28,12,48,52,25,215,225,235,255,255,145,195,200},
-Gold={28,23,6,55,45,12,255,250,225,200,180,120},
+Gold={28,23,6,55,45,12,255,205,45,255,250,225,200,180,120},
 Ice={12,22,32,22,42,57,125,215,255,238,250,255,155,190,205},
 Midnight={9,9,9,19,19,19,255,255,255,255,255,255,155,155,155}
 }
@@ -261,6 +261,60 @@ function UI:CreateTab(name)
 		}
 	end
 
+	function tab:CreateParagraph(o)
+		local text=type(o)=="table" and (o.Text or "") or tostring(o or "")
+
+		local l=N("TextLabel",{
+			Size=UDim2.new(1,0,0,60),
+			BackgroundColor3=C(25,25,25),
+			BorderSizePixel=0,
+			Text=text,
+			Font=Enum.Font.Gotham,
+			TextSize=11,
+			TextColor3=C(210,210,210),
+			TextWrapped=true,
+			TextXAlignment=Enum.TextXAlignment.Left,
+			TextYAlignment=Enum.TextYAlignment.Top,
+			Parent=page
+		})
+
+		N("UIPadding",{
+			PaddingLeft=UDim.new(0,10),
+			PaddingRight=UDim.new(0,10),
+			PaddingTop=UDim.new(0,8),
+			PaddingBottom=UDim.new(0,8),
+			Parent=l
+		})
+
+		N("UICorner",{CornerRadius=UDim.new(0,9),Parent=l})
+		Mark(l,"P")
+
+		return {
+			SetText=function(_,v)
+				l.Text=tostring(v)
+			end,
+			SetVisible=function(_,v)
+				l.Visible=v
+			end
+		}
+	end
+
+	function tab:CreateDivider()
+		local d=N("Frame",{
+			Size=UDim2.new(1,0,0,1),
+			BackgroundColor3=C(55,55,55),
+			BorderSizePixel=0,
+			Parent=page
+		})
+		Mark(d,"P")
+
+		return {
+			SetVisible=function(_,v)
+				d.Visible=v
+			end
+		}
+	end
+
 	function tab:CreateButton(o)
 		local b=ButtonBase(page,o.Text or "Button",36)
 
@@ -320,6 +374,53 @@ function UI:CreateTab(name)
 			end,
 			SetVisible=function(_,v)
 				b.Visible=v
+			end
+		}
+	end
+
+	function tab:CreateTextBox(o)
+		local box=N("TextBox",{
+			Size=UDim2.new(1,0,0,36),
+			BackgroundColor3=C(30,30,30),
+			BorderSizePixel=0,
+			Text=o.Default or "",
+			PlaceholderText=o.Placeholder or o.Text or "Enter text...",
+			Font=Enum.Font.Gotham,
+			TextSize=12,
+			TextColor3=C(230,230,230),
+			PlaceholderColor3=C(130,130,130),
+			ClearTextOnFocus=false,
+			TextXAlignment=Enum.TextXAlignment.Left,
+			Parent=page
+		})
+
+		N("UIPadding",{
+			PaddingLeft=UDim.new(0,10),
+			PaddingRight=UDim.new(0,10),
+			Parent=box
+		})
+
+		N("UICorner",{CornerRadius=UDim.new(0,9),Parent=box})
+		Mark(box,"P")
+
+		box.FocusLost:Connect(function()
+			if o.Callback then
+				o.Callback(box.Text)
+			end
+		end)
+
+		return {
+			SetText=function(_,v)
+				box.Text=tostring(v)
+			end,
+			SetValue=function(_,v)
+				box.Text=tostring(v)
+			end,
+			GetValue=function()
+				return box.Text
+			end,
+			SetVisible=function(_,v)
+				box.Visible=v
 			end
 		}
 	end
@@ -500,6 +601,185 @@ function UI:CreateTab(name)
 
 				if not v then
 					pop.Visible=false
+				end
+			end
+		}
+	end
+
+	function tab:CreateColorPicker(o)
+		local value=o.Default or Color3.new(1,1,1)
+		local open=false
+
+		local holder=N("Frame",{
+			Size=UDim2.new(1,0,0,36),
+			BackgroundTransparency=1,
+			Parent=page
+		})
+
+		local main=ButtonBase(holder,o.Text or "Color",36)
+		main.Size=UDim2.new(1,-48,0,36)
+
+		local preview=N("Frame",{
+			Size=UDim2.fromOffset(36,36),
+			Position=UDim2.new(1,-36,0,0),
+			BackgroundColor3=value,
+			BorderSizePixel=0,
+			Parent=holder
+		})
+
+		N("UICorner",{CornerRadius=UDim.new(0,9),Parent=preview})
+
+		local panel=N("Frame",{
+			Size=UDim2.new(1,0,0,0),
+			BackgroundColor3=C(24,24,24),
+			BorderSizePixel=0,
+			Visible=false,
+			ClipsDescendants=true,
+			Parent=page
+		})
+
+		N("UICorner",{CornerRadius=UDim.new(0,10),Parent=panel})
+		Mark(panel,"P")
+
+		local rgb={value.R*255,value.G*255,value.B*255}
+		local sliders={}
+
+		local function update()
+			value=Color3.fromRGB(
+				math.floor(rgb[1]+.5),
+				math.floor(rgb[2]+.5),
+				math.floor(rgb[3]+.5)
+			)
+
+			preview.BackgroundColor3=value
+
+			if o.Callback then
+				o.Callback(value)
+			end
+		end
+
+		local function makeRGB(index,name)
+			local y=8+(index-1)*40
+
+			local label=N("TextLabel",{
+				Size=UDim2.new(1,0,0,18),
+				Position=UDim2.fromOffset(8,y),
+				BackgroundTransparency=1,
+				Text=name..": "..math.floor(rgb[index]),
+				Font=Enum.Font.GothamMedium,
+				TextSize=10,
+				TextColor3=C(220,220,220),
+				TextXAlignment=Enum.TextXAlignment.Left,
+				Parent=panel
+			})
+			Mark(label,"T")
+
+			local bar=ButtonBase(panel,"",12)
+			bar.Size=UDim2.new(1,-16,0,12)
+			bar.Position=UDim2.fromOffset(8,y+21)
+			bar.BackgroundColor3=C(42,42,42)
+
+			local fill=N("Frame",{
+				Size=UDim2.new(rgb[index]/255,0,1,0),
+				BackgroundColor3=C(150,150,150),
+				BorderSizePixel=0,
+				Parent=bar
+			})
+
+			N("UICorner",{CornerRadius=UDim.new(0,6),Parent=fill})
+			Mark(fill,"A")
+
+			local dragging=false
+
+			local function set(v)
+				rgb[index]=math.clamp(v,0,255)
+				fill.Size=UDim2.new(rgb[index]/255,0,1,0)
+				label.Text=name..": "..math.floor(rgb[index])
+				update()
+			end
+
+			bar.InputBegan:Connect(function(i)
+				if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+					dragging=true
+					set((i.Position.X-bar.AbsolutePosition.X)/bar.AbsoluteSize.X*255)
+				end
+			end)
+
+			UIS.InputChanged:Connect(function(i)
+				if dragging and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
+					set((i.Position.X-bar.AbsolutePosition.X)/bar.AbsoluteSize.X*255)
+				end
+			end)
+
+			UIS.InputEnded:Connect(function(i)
+				if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+					dragging=false
+				end
+			end)
+
+			sliders[index]={Set=set,Fill=fill,Label=label}
+		end
+
+		makeRGB(1,"Red")
+		makeRGB(2,"Green")
+		makeRGB(3,"Blue")
+
+		local function refresh()
+			rgb={
+				value.R*255,
+				value.G*255,
+				value.B*255
+			}
+
+			for i=1,3 do
+				sliders[i].Fill.Size=UDim2.new(rgb[i]/255,0,1,0)
+				sliders[i].Label.Text=({"Red","Green","Blue"})[i]..": "..math.floor(rgb[i])
+			end
+
+			preview.BackgroundColor3=value
+		end
+
+		local function setOpen(state)
+			open=state
+			panel.Visible=open
+
+			if open then
+				panel.Size=UDim2.new(1,0,0,136)
+				panel.Position=UDim2.new(
+					0,
+					0,
+					0,
+					main.Position.Y.Offset+main.AbsoluteSize.Y+5
+				)
+				refresh()
+			else
+				panel.Size=UDim2.new(1,0,0,0)
+			end
+		end
+
+		main.MouseButton1Click:Connect(function()
+			setOpen(not open)
+		end)
+
+		return {
+			SetValue=function(_,v)
+				if typeof(v)=="Color3" then
+					value=v
+					refresh()
+					update()
+				end
+			end,
+			GetValue=function()
+				return value
+			end,
+			SetText=function(_,v)
+				o.Text=tostring(v)
+				main.Text=o.Text
+			end,
+			SetVisible=function(_,v)
+				holder.Visible=v
+				if not v then
+					setOpen(false)
 				end
 			end
 		}
@@ -691,7 +971,4 @@ Max.MouseButton1Click:Connect(function()
 end)
 
 Close.MouseButton1Click:Connect(function()
-	GUI.Enabled=false
-end)
-
-return UI
+	GUI.Enabled=fal
