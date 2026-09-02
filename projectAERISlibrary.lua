@@ -1,901 +1,750 @@
-local Players=game:GetService("Players")
+local P=game:GetService("Players")
 local UIS=game:GetService("UserInputService")
 local TS=game:GetService("TweenService")
 
-local Player=Players.LocalPlayer
-local GUI=Instance.new("ScreenGui")
-GUI.ResetOnSpawn=false
-GUI.ZIndexBehavior=Enum.ZIndexBehavior.Sibling
-GUI.Parent=Player:WaitForChild("PlayerGui")
+local L={}
+local G=Instance.new("ScreenGui")
+G.Name="ModernUI"
+G.ResetOnSpawn=false
+G.Parent=P.LocalPlayer:WaitForChild("PlayerGui")
 
-local UI={}
+local function tw(o,t,p)
+	TS:Create(o,TweenInfo.new(t,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),p):Play()
+end
+
+local function corner(o,r)
+	local c=Instance.new("UICorner")
+	c.CornerRadius=UDim.new(0,r)
+	c.Parent=o
+end
 
 local Themes={
-Ocean={8,20,32,16,38,55,0,170,255,240,250,255,145,185,205},
-Purple={22,12,32,40,20,55,175,80,255,250,240,255,185,155,205},
-Emerald={7,25,17,14,48,32,35,215,125,235,255,245,145,190,165},
-Crimson={30,8,11,52,15,20,255,55,65,255,240,240,200,150,155},
-Sunset={35,17,8,58,29,14,255,125,35,255,245,230,205,170,140},
-Pink={32,9,22,55,17,38,255,75,165,255,240,250,200,150,180},
-Cyan={6,25,28,12,48,52,25,215,225,235,255,255,145,195,200},
-Gold={28,23,6,55,45,12,255,205,45,255,250,225,200,180,120},
-Ice={12,22,32,22,42,57,125,215,255,238,250,255,155,190,205},
-Midnight={9,9,9,19,19,19,255,255,255,255,255,255,155,155,155}
+	Midnight={M=Color3.fromRGB(5,5,7),P=Color3.fromRGB(15,15,18),A=Color3.fromRGB(255,255,255),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(155,155,160)},
+	Ocean={M=Color3.fromRGB(5,10,15),P=Color3.fromRGB(10,25,35),A=Color3.fromRGB(100,200,255),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(150,180,195)},
+	Purple={M=Color3.fromRGB(10,5,15),P=Color3.fromRGB(25,12,35),A=Color3.fromRGB(190,120,255),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(175,155,190)},
+	Emerald={M=Color3.fromRGB(5,12,8),P=Color3.fromRGB(10,28,18),A=Color3.fromRGB(100,255,170),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(155,185,165)},
+	Crimson={M=Color3.fromRGB(15,5,7),P=Color3.fromRGB(32,10,14),A=Color3.fromRGB(255,100,115),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(190,155,160)},
+	Sunset={M=Color3.fromRGB(18,8,5),P=Color3.fromRGB(35,18,10),A=Color3.fromRGB(255,165,80),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(195,165,145)},
+	Pink={M=Color3.fromRGB(15,5,10),P=Color3.fromRGB(32,10,22),A=Color3.fromRGB(255,130,200),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(190,155,175)},
+	Cyan={M=Color3.fromRGB(4,12,14),P=Color3.fromRGB(8,27,31),A=Color3.fromRGB(80,240,255),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(150,190,195)},
+	Gold={M=Color3.fromRGB(14,11,5),P=Color3.fromRGB(30,23,8),A=Color3.fromRGB(255,215,90),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(190,175,135)},
+	Ice={M=Color3.fromRGB(7,11,16),P=Color3.fromRGB(15,25,35),A=Color3.fromRGB(170,220,255),T=Color3.fromRGB(255,255,255),S=Color3.fromRGB(160,180,195)}
 }
 
-local ThemeObjects={}
+L.Theme=Themes.Midnight
+L.CustomColor=Color3.new(1,1,1)
 
-local function C(r,g,b)
-	return Color3.fromRGB(r,g,b)
+local Main=Instance.new("Frame")
+Main.Size=UDim2.fromOffset(400,300)
+Main.Position=UDim2.new(.5,-200,.5,-150)
+Main.BackgroundColor3=L.Theme.M
+Main.BorderSizePixel=0
+Main.ClipsDescendants=true
+Main.Parent=G
+corner(Main,14)
+
+local Sh=Instance.new("UIShadow")
+Sh.BlurRadius=UDim.new(0,18)
+Sh.Offset=UDim2.fromOffset(0,5)
+Sh.Spread=UDim2.fromOffset(2,2)
+Sh.Transparency=.45
+Sh.Color=Color3.new(0,0,0)
+Sh.Parent=Main
+
+local Top=Instance.new("Frame")
+Top.Size=UDim2.new(1,0,0,48)
+Top.BackgroundColor3=L.Theme.P
+Top.BorderSizePixel=0
+Top.Parent=Main
+corner(Top,14)
+
+local Cover=Instance.new("Frame")
+Cover.Size=UDim2.new(1,0,0,14)
+Cover.Position=UDim2.fromOffset(0,34)
+Cover.BackgroundColor3=L.Theme.P
+Cover.BorderSizePixel=0
+Cover.Parent=Top
+
+local Title=Instance.new("TextLabel")
+Title.Size=UDim2.new(1,-190,0,24)
+Title.Position=UDim2.fromOffset(12,5)
+Title.BackgroundTransparency=1
+Title.Text="Modern UI"
+Title.Font=Enum.Font.GothamBold
+Title.TextSize=16
+Title.TextColor3=L.Theme.T
+Title.TextXAlignment=Enum.TextXAlignment.Left
+Title.Parent=Top
+
+local Sub=Instance.new("TextLabel")
+Sub.Size=UDim2.new(1,-190,0,16)
+Sub.Position=UDim2.fromOffset(12,27)
+Sub.BackgroundTransparency=1
+Sub.Text="Modern interface"
+Sub.Font=Enum.Font.Gotham
+Sub.TextSize=10
+Sub.TextColor3=L.Theme.S
+Sub.TextXAlignment=Enum.TextXAlignment.Left
+Sub.Parent=Top
+
+local function topBtn(text,x,w)
+	local b=Instance.new("TextButton")
+	b.Size=UDim2.fromOffset(w,30)
+	b.Position=UDim2.new(1,x,0,9)
+	b.BackgroundColor3=L.Theme.M
+	b.Text=text
+	b.TextColor3=L.Theme.T
+	b.Font=Enum.Font.GothamBold
+	b.TextSize=12
+	b.BorderSizePixel=0
+	b.Parent=Top
+	corner(b,8)
+	return b
 end
 
-local function Mark(o,t)
-	o:SetAttribute("YTheme",t)
-	table.insert(ThemeObjects,o)
-	return o
+local Close=topBtn("×",-40,32)
+local Max=topBtn("□",-76,32)
+local Min=topBtn("—",-112,32)
+local Key=topBtn("Key",-160,42)
+
+local Content=Instance.new("Frame")
+Content.Size=UDim2.new(1,0,1,-48)
+Content.Position=UDim2.fromOffset(0,48)
+Content.BackgroundTransparency=1
+Content.Parent=Main
+
+local Tabs=Instance.new("ScrollingFrame")
+Tabs.Size=UDim2.new(1,-20,0,38)
+Tabs.Position=UDim2.fromOffset(10,5)
+Tabs.BackgroundTransparency=1
+Tabs.BorderSizePixel=0
+Tabs.ScrollBarThickness=0
+Tabs.ScrollingDirection=Enum.ScrollingDirection.X
+Tabs.ElasticBehavior=Enum.ElasticBehavior.Always
+Tabs.AutomaticCanvasSize=Enum.AutomaticSize.X
+Tabs.CanvasSize=UDim2.new()
+Tabs.Parent=Content
+
+local TabLayout=Instance.new("UIListLayout")
+TabLayout.FillDirection=Enum.FillDirection.Horizontal
+TabLayout.Padding=UDim.new(0,6)
+TabLayout.Parent=Tabs
+
+local Pages=Instance.new("Frame")
+Pages.Size=UDim2.new(1,-20,1,-48)
+Pages.Position=UDim2.fromOffset(10,43)
+Pages.BackgroundTransparency=1
+Pages.Parent=Content
+
+local TabsList={}
+local currentPage
+
+local function pageScroll()
+	local s=Instance.new("ScrollingFrame")
+	s.Size=UDim2.new(1,0,1,0)
+	s.BackgroundTransparency=1
+	s.BorderSizePixel=0
+	s.ScrollBarThickness=3
+	s.ScrollingDirection=Enum.ScrollingDirection.Y
+	s.ElasticBehavior=Enum.ElasticBehavior.Never
+	s.AutomaticCanvasSize=Enum.AutomaticSize.Y
+	s.CanvasSize=UDim2.new()
+	s.Visible=false
+	s.Parent=Pages
+
+	local l=Instance.new("UIListLayout")
+	l.Padding=UDim.new(0,7)
+	l.HorizontalAlignment=Enum.HorizontalAlignment.Center
+	l.Parent=s
+
+	local p=Instance.new("UIPadding")
+	p.PaddingTop=UDim.new(0,4)
+	p.PaddingBottom=UDim.new(0,12)
+	p.Parent=s
+
+	return s
 end
 
-local function N(c,p)
-	local o=Instance.new(c)
-	for k,v in pairs(p or {}) do
-		o[k]=v
+local function selectTab(page,button)
+	for p,b in pairs(TabsList) do
+		p.Visible=false
+		b.BackgroundColor3=L.Theme.M
+		b.TextColor3=L.Theme.T
 	end
-	return o
+
+	page.Visible=true
+	button.BackgroundColor3=L.Theme.T
+	button.TextColor3=L.Theme.M
+	currentPage=page
 end
 
-local W=N("Frame",{
-	Name="Window",
-	Size=UDim2.new(0.584,0,0.857,0),
-	Position=UDim2.new(0.195,0,0.074,0),
-	BackgroundColor3=C(19,19,19),
-	BorderSizePixel=0,
-	ClipsDescendants=true,
-	Parent=GUI
-})
-Mark(W,"M")
+function L:AddTab(name)
+	local b=Instance.new("TextButton")
+	b.Size=UDim2.fromOffset(100,32)
+	b.BackgroundColor3=L.Theme.M
+	b.Text=name
+	b.TextColor3=L.Theme.T
+	b.Font=Enum.Font.GothamBold
+	b.TextSize=12
+	b.BorderSizePixel=0
+	b.Parent=Tabs
+	corner(b,8)
 
-N("UICorner",{CornerRadius=UDim.new(0,14),Parent=W})
+	local p=pageScroll()
+	TabsList[p]=b
 
-N("UIShadow",{
-	BlurRadius=UDim.new(0,18),
-	Color=Color3.new(0,0,0),
-	Transparency=.35,
-	Offset=UDim2.fromOffset(0,5),
-	Spread=UDim2.fromOffset(2,2),
-	Parent=W
-})
-
-local Top=N("Frame",{
-	Size=UDim2.new(1,0,0,50),
-	BackgroundTransparency=1,
-	Parent=W
-})
-
-local Title=N("TextLabel",{
-	Size=UDim2.new(1,-150,0,27),
-	Position=UDim2.fromOffset(16,6),
-	BackgroundTransparency=1,
-	Text="Project Aeris",
-	Font=Enum.Font.GothamBold,
-	TextSize=18,
-	TextColor3=C(255,255,255),
-	TextXAlignment=Enum.TextXAlignment.Left,
-	Parent=Top
-})
-Mark(Title,"T")
-
-local Sub=N("TextLabel",{
-	Size=UDim2.new(1,-150,0,18),
-	Position=UDim2.fromOffset(17,28),
-	BackgroundTransparency=1,
-	Text="First Release",
-	Font=Enum.Font.Gotham,
-	TextSize=10,
-	TextColor3=C(155,155,155),
-	TextXAlignment=Enum.TextXAlignment.Left,
-	Parent=Top
-})
-Mark(Sub,"S")
-
-local function TB(text,x)
-	local b=N("TextButton",{
-		Size=UDim2.fromOffset(32,32),
-		Position=UDim2.new(1,x,0,9),
-		BackgroundColor3=C(30,30,30),
-		Text=text,
-		Font=Enum.Font.GothamBold,
-		TextSize=16,
-		TextColor3=C(220,220,220),
-		AutoButtonColor=false,
-		Parent=Top
-	})
-	N("UICorner",{CornerRadius=UDim.new(0,8),Parent=b})
-	Mark(b,"P")
-	return b
-end
-
-local Min=TB("−",-112)
-local Max=TB("□",-74)
-local Close=TB("×",-36)
-
-local Tabs=N("ScrollingFrame",{
-	Size=UDim2.new(1,-14,0,38),
-	Position=UDim2.fromOffset(7,55),
-	BackgroundTransparency=1,
-	BorderSizePixel=0,
-	ScrollBarThickness=2,
-	ScrollingDirection=Enum.ScrollingDirection.X,
-	AutomaticCanvasSize=Enum.AutomaticSize.X,
-	CanvasSize=UDim2.new(),
-	Parent=W
-})
-
-N("UIListLayout",{
-	FillDirection=Enum.FillDirection.Horizontal,
-	Padding=UDim.new(0,5),
-	SortOrder=Enum.SortOrder.LayoutOrder,
-	Parent=Tabs
-})
-
-local Pages=N("Frame",{
-	Size=UDim2.new(1,-24,1,-108),
-	Position=UDim2.fromOffset(12,97),
-	BackgroundTransparency=1,
-	Parent=W
-})
-
-local function ButtonBase(parent,text,h)
-	local b=N("TextButton",{
-		Size=UDim2.new(1,0,0,h or 36),
-		BackgroundColor3=C(30,30,30),
-		Text=text or "",
-		Font=Enum.Font.GothamMedium,
-		TextSize=12,
-		TextColor3=C(230,230,230),
-		AutoButtonColor=false,
-		Parent=parent
-	})
-	N("UICorner",{CornerRadius=UDim.new(0,9),Parent=b})
-	Mark(b,"P")
-	return b
-end
-
-local function Layout(parent,pad)
-	return N("UIListLayout",{
-		Padding=UDim.new(0,pad or 6),
-		SortOrder=Enum.SortOrder.LayoutOrder,
-		Parent=parent
-	})
-end
-
-local TabsData={}
-local CurrentTab
-
-function UI:CreateTab(name)
-	local tab={}
-
-	local page=N("ScrollingFrame",{
-		Name=name.."Page",
-		Size=UDim2.new(1,0,1,0),
-		BackgroundTransparency=1,
-		BorderSizePixel=0,
-		ScrollBarThickness=3,
-		ScrollingDirection=Enum.ScrollingDirection.Y,
-		AutomaticCanvasSize=Enum.AutomaticSize.Y,
-		CanvasSize=UDim2.new(),
-		Visible=false,
-		Parent=Pages
-	})
-
-	Layout(page,7)
-
-	local tb=ButtonBase(Tabs,name,34)
-	tb.Size=UDim2.fromOffset(math.max(75,#name*8+25),34)
-
-	tb.MouseButton1Click:Connect(function()
-		for _,v in pairs(TabsData) do
-			v.Page.Visible=false
-		end
-		page.Visible=true
-		CurrentTab=tab
+	b.Activated:Connect(function()
+		selectTab(p,b)
 	end)
 
-	table.insert(TabsData,{Page=page,Tab=tab})
-
-	if not CurrentTab then
-		page.Visible=true
-		CurrentTab=tab
+	if not currentPage then
+		selectTab(p,b)
 	end
 
-	function tab:CreateHeader(text)
-		local h=N("TextLabel",{
-			Size=UDim2.new(1,0,0,30),
-			BackgroundTransparency=1,
-			Text=text,
-			Font=Enum.Font.GothamBold,
-			TextSize=16,
-			TextColor3=C(255,255,255),
-			TextXAlignment=Enum.TextXAlignment.Left,
-			Parent=page
-		})
-		Mark(h,"T")
-		return h
-	end
-
-	function tab:CreateSection(text)
-		local s=N("TextLabel",{
-			Size=UDim2.new(1,0,0,22),
-			BackgroundTransparency=1,
-			Text=text,
-			Font=Enum.Font.GothamSemibold,
-			TextSize=11,
-			TextColor3=C(155,155,155),
-			TextXAlignment=Enum.TextXAlignment.Left,
-			Parent=page
-		})
-		Mark(s,"S")
-		return s
-	end
-
-	function tab:CreateLabel(text)
-		local l=N("TextLabel",{
-			Size=UDim2.new(1,0,0,32),
-			BackgroundTransparency=1,
-			Text=text,
-			Font=Enum.Font.Gotham,
-			TextSize=12,
-			TextColor3=C(220,220,220),
-			TextWrapped=true,
-			TextXAlignment=Enum.TextXAlignment.Left,
-			Parent=page
-		})
-		Mark(l,"T")
-
-		return {
-			SetText=function(_,v)
-				l.Text=tostring(v)
-			end,
-			SetVisible=function(_,v)
-				l.Visible=v
-			end
-		}
-	end
-
-	function tab:CreateParagraph(o)
-		local text=type(o)=="table" and (o.Text or "") or tostring(o or "")
-
-		local l=N("TextLabel",{
-			Size=UDim2.new(1,0,0,60),
-			BackgroundColor3=C(25,25,25),
-			BorderSizePixel=0,
-			Text=text,
-			Font=Enum.Font.Gotham,
-			TextSize=11,
-			TextColor3=C(210,210,210),
-			TextWrapped=true,
-			TextXAlignment=Enum.TextXAlignment.Left,
-			TextYAlignment=Enum.TextYAlignment.Top,
-			Parent=page
-		})
-
-		N("UIPadding",{
-			PaddingLeft=UDim.new(0,10),
-			PaddingRight=UDim.new(0,10),
-			PaddingTop=UDim.new(0,8),
-			PaddingBottom=UDim.new(0,8),
-			Parent=l
-		})
-
-		N("UICorner",{CornerRadius=UDim.new(0,9),Parent=l})
-		Mark(l,"P")
-
-		return {
-			SetText=function(_,v)
-				l.Text=tostring(v)
-			end,
-			SetVisible=function(_,v)
-				l.Visible=v
-			end
-		}
-	end
-
-	function tab:CreateDivider()
-		local d=N("Frame",{
-			Size=UDim2.new(1,0,0,1),
-			BackgroundColor3=C(55,55,55),
-			BorderSizePixel=0,
-			Parent=page
-		})
-		Mark(d,"P")
-
-		return {
-			SetVisible=function(_,v)
-				d.Visible=v
-			end
-		}
-	end
-
-	function tab:CreateButton(o)
-		local b=ButtonBase(page,o.Text or "Button",36)
-
-		b.MouseButton1Click:Connect(function()
-			if o.Callback then
-				o.Callback()
-			end
-		end)
-
-		return {
-			SetText=function(_,v)
-				b.Text=tostring(v)
-			end,
-			SetVisible=function(_,v)
-				b.Visible=v
-			end
-		}
-	end
-
-	function tab:CreateToggle(o)
-		local state=o.Default==true
-
-		local b=ButtonBase(
-			page,
-			(o.Text or "Toggle").." : "..(state and "ON" or "OFF"),
-			36
-		)
-
-		local function refresh()
-			b.Text=(o.Text or "Toggle").." : "..(state and "ON" or "OFF")
-		end
-
-		b.MouseButton1Click:Connect(function()
-			state=not state
-			refresh()
-
-			if o.Callback then
-				o.Callback(state)
-			end
-		end)
-
-		return {
-			SetValue=function(_,v)
-				state=v==true
-				refresh()
-
-				if o.Callback then
-					o.Callback(state)
-				end
-			end,
-			GetValue=function()
-				return state
-			end,
-			SetText=function(_,v)
-				o.Text=tostring(v)
-				refresh()
-			end,
-			SetVisible=function(_,v)
-				b.Visible=v
-			end
-		}
-	end
-
-	function tab:CreateTextBox(o)
-		local box=N("TextBox",{
-			Size=UDim2.new(1,0,0,36),
-			BackgroundColor3=C(30,30,30),
-			BorderSizePixel=0,
-			Text=o.Default or "",
-			PlaceholderText=o.Placeholder or o.Text or "Enter text...",
-			Font=Enum.Font.Gotham,
-			TextSize=12,
-			TextColor3=C(230,230,230),
-			PlaceholderColor3=C(130,130,130),
-			ClearTextOnFocus=false,
-			TextXAlignment=Enum.TextXAlignment.Left,
-			Parent=page
-		})
-
-		N("UIPadding",{
-			PaddingLeft=UDim.new(0,10),
-			PaddingRight=UDim.new(0,10),
-			Parent=box
-		})
-
-		N("UICorner",{CornerRadius=UDim.new(0,9),Parent=box})
-		Mark(box,"P")
-
-		box.FocusLost:Connect(function()
-			if o.Callback then
-				o.Callback(box.Text)
-			end
-		end)
-
-		return {
-			SetText=function(_,v)
-				box.Text=tostring(v)
-			end,
-			SetValue=function(_,v)
-				box.Text=tostring(v)
-			end,
-			GetValue=function()
-				return box.Text
-			end,
-			SetVisible=function(_,v)
-				box.Visible=v
-			end
-		}
-	end
-
-	function tab:CreateSlider(o)
-		local value=o.Default or o.Min or 0
-		local min=o.Min or 0
-		local max=o.Max or 100
-
-		local holder=N("Frame",{
-			Size=UDim2.new(1,0,0,48),
-			BackgroundTransparency=1,
-			Parent=page
-		})
-
-		local label=N("TextLabel",{
-			Size=UDim2.new(1,0,0,20),
-			BackgroundTransparency=1,
-			Text=(o.Text or "Slider")..": "..tostring(value),
-			Font=Enum.Font.GothamMedium,
-			TextSize=11,
-			TextColor3=C(220,220,220),
-			TextXAlignment=Enum.TextXAlignment.Left,
-			Parent=holder
-		})
-		Mark(label,"T")
-
-		local bar=ButtonBase(holder,"",14)
-		bar.Position=UDim2.fromOffset(0,25)
-		bar.BackgroundColor3=C(38,38,38)
-
-		local fill=N("Frame",{
-			Size=UDim2.new((value-min)/(max-min),0,1,0),
-			BackgroundColor3=C(120,120,120),
-			BorderSizePixel=0,
-			Parent=bar
-		})
-
-		N("UICorner",{CornerRadius=UDim.new(0,7),Parent=fill})
-		Mark(fill,"A")
-
-		local dragging=false
-
-		local function set(v)
-			value=math.clamp(v,min,max)
-
-			local a=(value-min)/(max-min)
-			fill.Size=UDim2.new(a,0,1,0)
-			label.Text=(o.Text or "Slider")..": "..math.floor(value)
-
-			if o.Callback then
-				o.Callback(value)
-			end
-		end
-
-		bar.InputBegan:Connect(function(i)
-			if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
-				dragging=true
-				set(min+(i.Position.X-bar.AbsolutePosition.X)/bar.AbsoluteSize.X*(max-min))
-			end
-		end)
-
-		UIS.InputChanged:Connect(function(i)
-			if dragging and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
-				set(min+(i.Position.X-bar.AbsolutePosition.X)/bar.AbsoluteSize.X*(max-min))
-			end
-		end)
-
-		UIS.InputEnded:Connect(function(i)
-			if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
-				dragging=false
-			end
-		end)
-
-		return {
-			SetValue=function(_,v)
-				set(v)
-			end,
-			GetValue=function()
-				return value
-			end,
-			SetText=function(_,v)
-				o.Text=tostring(v)
-				label.Text=o.Text..": "..math.floor(value)
-			end,
-			SetVisible=function(_,v)
-				holder.Visible=v
-			end
-		}
-	end
-
-	function tab:CreateDropdown(o)
-		local open=false
-		local value=o.Default or o.Options[1]
-
-		local b=ButtonBase(
-			page,
-			(o.Text or "Dropdown")..": "..tostring(value),
-			36
-		)
-
-		local pop=N("Frame",{
-			Size=UDim2.new(1,0,0,0),
-			BackgroundColor3=C(25,25,25),
-			BorderSizePixel=0,
-			Visible=false,
-			ZIndex=20,
-			Parent=page
-		})
-
-		N("UICorner",{CornerRadius=UDim.new(0,9),Parent=pop})
-		Layout(pop,4)
-
-		local function rebuild()
-			for _,v in pairs(pop:GetChildren()) do
-				if v:IsA("TextButton") then
-					v:Destroy()
-				end
-			end
-
-			for _,v in ipairs(o.Options or {}) do
-				local x=ButtonBase(pop,tostring(v),30)
-
-				x.Size=UDim2.new(1,-8,0,30)
-				x.Position=UDim2.fromOffset(4,0)
-				x.ZIndex=21
-
-				x.MouseButton1Click:Connect(function()
-					value=v
-					b.Text=(o.Text or "Dropdown")..": "..tostring(value)
-					open=false
-					pop.Visible=false
-
-					if o.Callback then
-						o.Callback(value)
-					end
-				end)
-			end
-
-			pop.Size=UDim2.new(1,0,0,#(o.Options or {})*34+6)
-		end
-
-		local function position()
-			pop.Position=UDim2.new(
-				0,
-				b.Position.X.Offset,
-				0,
-				b.Position.Y.Offset+b.AbsoluteSize.Y+4
-			)
-		end
-
-		b.MouseButton1Click:Connect(function()
-			open=not open
-
-			if open then
-				rebuild()
-				position()
-				pop.Visible=true
-			else
-				pop.Visible=false
-			end
-		end)
-
-		return {
-			SetValue=function(_,v)
-				value=v
-				b.Text=(o.Text or "Dropdown")..": "..tostring(value)
-			end,
-			GetValue=function()
-				return value
-			end,
-			SetText=function(_,v)
-				o.Text=tostring(v)
-				b.Text=o.Text..": "..tostring(value)
-			end,
-			SetVisible=function(_,v)
-				b.Visible=v
-
-				if not v then
-					pop.Visible=false
-				end
-			end
-		}
-	end
-
-	function tab:CreateColorPicker(o)
-		local value=o.Default or Color3.new(1,1,1)
-		local open=false
-
-		local holder=N("Frame",{
-			Size=UDim2.new(1,0,0,36),
-			BackgroundTransparency=1,
-			Parent=page
-		})
-
-		local main=ButtonBase(holder,o.Text or "Color",36)
-		main.Size=UDim2.new(1,-48,0,36)
-
-		local preview=N("Frame",{
-			Size=UDim2.fromOffset(36,36),
-			Position=UDim2.new(1,-36,0,0),
-			BackgroundColor3=value,
-			BorderSizePixel=0,
-			Parent=holder
-		})
-
-		N("UICorner",{CornerRadius=UDim.new(0,9),Parent=preview})
-
-		local panel=N("Frame",{
-			Size=UDim2.new(1,0,0,0),
-			BackgroundColor3=C(24,24,24),
-			BorderSizePixel=0,
-			Visible=false,
-			ClipsDescendants=true,
-			Parent=page
-		})
-
-		N("UICorner",{CornerRadius=UDim.new(0,10),Parent=panel})
-		Mark(panel,"P")
-
-		local rgb={value.R*255,value.G*255,value.B*255}
-		local sliders={}
-
-		local function update()
-			value=Color3.fromRGB(
-				math.floor(rgb[1]+.5),
-				math.floor(rgb[2]+.5),
-				math.floor(rgb[3]+.5)
-			)
-
-			preview.BackgroundColor3=value
-
-			if o.Callback then
-				o.Callback(value)
-			end
-		end
-
-		local function makeRGB(index,name)
-			local y=8+(index-1)*40
-
-			local label=N("TextLabel",{
-				Size=UDim2.new(1,0,0,18),
-				Position=UDim2.fromOffset(8,y),
-				BackgroundTransparency=1,
-				Text=name..": "..math.floor(rgb[index]),
-				Font=Enum.Font.GothamMedium,
-				TextSize=10,
-				TextColor3=C(220,220,220),
-				TextXAlignment=Enum.TextXAlignment.Left,
-				Parent=panel
-			})
-			Mark(label,"T")
-
-			local bar=ButtonBase(panel,"",12)
-			bar.Size=UDim2.new(1,-16,0,12)
-			bar.Position=UDim2.fromOffset(8,y+21)
-			bar.BackgroundColor3=C(42,42,42)
-
-			local fill=N("Frame",{
-				Size=UDim2.new(rgb[index]/255,0,1,0),
-				BackgroundColor3=C(150,150,150),
-				BorderSizePixel=0,
-				Parent=bar
-			})
-
-			N("UICorner",{CornerRadius=UDim.new(0,6),Parent=fill})
-			Mark(fill,"A")
-
-			local dragging=false
-
-			local function set(v)
-				rgb[index]=math.clamp(v,0,255)
-				fill.Size=UDim2.new(rgb[index]/255,0,1,0)
-				label.Text=name..": "..math.floor(rgb[index])
-				update()
-			end
-
-			bar.InputBegan:Connect(function(i)
-				if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
-					dragging=true
-					set((i.Position.X-bar.AbsolutePosition.X)/bar.AbsoluteSize.X*255)
-				end
-			end)
-
-			UIS.InputChanged:Connect(function(i)
-				if dragging and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
-					set((i.Position.X-bar.AbsolutePosition.X)/bar.AbsoluteSize.X*255)
-				end
-			end)
-
-			UIS.InputEnded:Connect(function(i)
-				if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
-					dragging=false
-				end
-			end)
-
-			sliders[index]={Set=set,Fill=fill,Label=label}
-		end
-
-		makeRGB(1,"Red")
-		makeRGB(2,"Green")
-		makeRGB(3,"Blue")
-
-		local function refresh()
-			rgb={
-				value.R*255,
-				value.G*255,
-				value.B*255
-			}
-
-			for i=1,3 do
-				sliders[i].Fill.Size=UDim2.new(rgb[i]/255,0,1,0)
-				sliders[i].Label.Text=({"Red","Green","Blue"})[i]..": "..math.floor(rgb[i])
-			end
-
-			preview.BackgroundColor3=value
-		end
-
-		local function setOpen(state)
-			open=state
-			panel.Visible=open
-
-			if open then
-				panel.Size=UDim2.new(1,0,0,136)
-				panel.Position=UDim2.new(
-					0,
-					0,
-					0,
-					main.Position.Y.Offset+main.AbsoluteSize.Y+5
-				)
-				refresh()
-			else
-				panel.Size=UDim2.new(1,0,0,0)
-			end
-		end
-
-		main.MouseButton1Click:Connect(function()
-			setOpen(not open)
-		end)
-
-		return {
-			SetValue=function(_,v)
-				if typeof(v)=="Color3" then
-					value=v
-					refresh()
-					update()
-				end
-			end,
-			GetValue=function()
-				return value
-			end,
-			SetText=function(_,v)
-				o.Text=tostring(v)
-				main.Text=o.Text
-			end,
-			SetVisible=function(_,v)
-				holder.Visible=v
-				if not v then
-					setOpen(false)
-				end
-			end
-		}
-	end
-
-	function tab:CreateKeybind(o)
-		local key=o.Default or Enum.KeyCode.RightShift
-
-		local b=ButtonBase(
-			page,
-			(o.Text or "Keybind")..": "..key.Name,
-			36
-		)
-
-		b.MouseButton1Click:Connect(function()
-			b.Text=(o.Text or "Keybind")..": Press Key"
-
-			local c
-
-			c=UIS.InputBegan:Connect(function(i,g)
-				if not g and i.UserInputType==Enum.UserInputType.Keyboard then
-					key=i.KeyCode
-					b.Text=(o.Text or "Keybind")..": "..key.Name
-					c:Disconnect()
-
-					if o.Callback then
-						o.Callback(key)
-					end
-				end
-			end)
-		end)
-
-		return {
-			SetValue=function(_,v)
-				key=v
-				b.Text=(o.Text or "Keybind")..": "..key.Name
-			end,
-			GetValue=function()
-				return key
-			end,
-			SetText=function(_,v)
-				o.Text=tostring(v)
-				b.Text=o.Text..": "..key.Name
-			end,
-			SetVisible=function(_,v)
-				b.Visible=v
-			end
-		}
-	end
-
-	return tab
+	return p
 end
 
-function UI:Notify(text)
-	local n=N("TextLabel",{
-		Size=UDim2.fromOffset(260,42),
-		Position=UDim2.new(1,20,1,-55),
-		BackgroundColor3=C(25,25,25),
-		Text=tostring(text),
-		Font=Enum.Font.GothamMedium,
-		TextSize=12,
-		TextColor3=C(240,240,240),
-		TextWrapped=true,
-		Parent=GUI
-	})
+local function holder(parent,h)
+	local f=Instance.new("Frame")
+	f.Size=UDim2.new(1,-8,0,h)
+	f.BackgroundColor3=L.Theme.P
+	f.BorderSizePixel=0
+	f.Parent=parent
+	corner(f,9)
+	return f
+end
 
-	N("UICorner",{CornerRadius=UDim.new(0,10),Parent=n})
-	Mark(n,"P")
+function L:AddHeader(parent,text)
+	local f=holder(parent,30)
 
-	TS:Create(n,TweenInfo.new(.25,Enum.EasingStyle.Quint),{
-		Position=UDim2.new(1,-275,1,-55)
-	}):Play()
+	local t=Instance.new("TextLabel")
+	t.Size=UDim2.new(1,-16,1,0)
+	t.Position=UDim2.fromOffset(8,0)
+	t.BackgroundTransparency=1
+	t.Text=text
+	t.TextColor3=L.Theme.T
+	t.Font=Enum.Font.GothamBold
+	t.TextSize=13
+	t.TextXAlignment=Enum.TextXAlignment.Left
+	t.Parent=f
 
-	task.delay(2,function()
-		TS:Create(n,TweenInfo.new(.25),{
-			Position=UDim2.new(1,20,1,-55)
-		}):Play()
+	return f
+end
 
-		task.wait(.3)
+function L:AddSection(parent,text)
+	local f=holder(parent,26)
+
+	local t=Instance.new("TextLabel")
+	t.Size=UDim2.new(1,-16,1,0)
+	t.Position=UDim2.fromOffset(8,0)
+	t.BackgroundTransparency=1
+	t.Text=text
+	t.TextColor3=L.Theme.A
+	t.Font=Enum.Font.GothamBold
+	t.TextSize=11
+	t.TextXAlignment=Enum.TextXAlignment.Left
+	t.Parent=f
+
+	return f
+end
+
+function L:AddLabel(parent,text)
+	local f=holder(parent,32)
+
+	local t=Instance.new("TextLabel")
+	t.Size=UDim2.new(1,-16,1,0)
+	t.Position=UDim2.fromOffset(8,0)
+	t.BackgroundTransparency=1
+	t.Text=text
+	t.TextColor3=L.Theme.S
+	t.Font=Enum.Font.Gotham
+	t.TextSize=11
+	t.TextXAlignment=Enum.TextXAlignment.Left
+	t.Parent=f
+
+	return f
+end
+
+function L:AddButton(parent,text,callback)
+	local f=holder(parent,34)
+
+	local b=Instance.new("TextButton")
+	b.Size=UDim2.new(1,-10,1,-6)
+	b.Position=UDim2.fromOffset(5,3)
+	b.BackgroundColor3=L.Theme.M
+	b.Text=text
+	b.TextColor3=L.Theme.T
+	b.Font=Enum.Font.GothamBold
+	b.TextSize=11
+	b.BorderSizePixel=0
+	b.Parent=f
+	corner(b,7)
+
+	b.Activated:Connect(function()
+		if callback then
+			callback()
+		end
+	end)
+
+	return f
+end
+
+function L:AddToggle(parent,text,value,callback)
+	local f=holder(parent,38)
+
+	local t=Instance.new("TextLabel")
+	t.Size=UDim2.new(1,-65,1,0)
+	t.Position=UDim2.fromOffset(9,0)
+	t.BackgroundTransparency=1
+	t.Text=text
+	t.TextColor3=L.Theme.T
+	t.Font=Enum.Font.Gotham
+	t.TextSize=11
+	t.TextXAlignment=Enum.TextXAlignment.Left
+	t.Parent=f
+
+	local track=Instance.new("TextButton")
+	track.Size=UDim2.fromOffset(42,22)
+	track.Position=UDim2.new(1,-51,.5,-11)
+	track.BackgroundColor3=L.Theme.M
+	track.Text=""
+	track.BorderSizePixel=0
+	track.Parent=f
+	corner(track,11)
+
+	local knob=Instance.new("Frame")
+	knob.Size=UDim2.fromOffset(18,18)
+	knob.Position=value and UDim2.new(1,-20,.5,-9) or UDim2.fromOffset(2,2)
+	knob.BackgroundColor3=L.Theme.T
+	knob.BorderSizePixel=0
+	knob.Parent=track
+	corner(knob,9)
+
+	local on=value
+
+	track.Activated:Connect(function()
+		on=not on
+
+		tw(knob,.18,{
+			Position=on and UDim2.new(1,-20,.5,-9) or UDim2.fromOffset(2,2)
+		})
+
+		if callback then
+			callback(on)
+		end
+	end)
+
+	return f
+end
+
+function L:AddSlider(parent,text,min,max,value,callback)
+	local f=holder(parent,48)
+
+	local t=Instance.new("TextLabel")
+	t.Size=UDim2.new(1,-20,0,18)
+	t.Position=UDim2.fromOffset(9,3)
+	t.BackgroundTransparency=1
+	t.Text=text.." : "..tostring(value)
+	t.TextColor3=L.Theme.T
+	t.Font=Enum.Font.Gotham
+	t.TextSize=11
+	t.TextXAlignment=Enum.TextXAlignment.Left
+	t.Parent=f
+
+	local bar=Instance.new("Frame")
+	bar.Size=UDim2.new(1,-20,0,5)
+	bar.Position=UDim2.fromOffset(10,31)
+	bar.BackgroundColor3=L.Theme.M
+	bar.BorderSizePixel=0
+	bar.Parent=f
+	corner(bar,4)
+
+	local fill=Instance.new("Frame")
+	fill.Size=UDim2.new((value-min)/(max-min),0,1,0)
+	fill.BackgroundColor3=L.Theme.T
+	fill.BorderSizePixel=0
+	fill.Parent=bar
+	corner(fill,4)
+
+	local knob=Instance.new("Frame")
+	knob.Size=UDim2.fromOffset(14,14)
+	knob.Position=UDim2.new((value-min)/(max-min),-7,.5,-7)
+	knob.BackgroundColor3=L.Theme.T
+	knob.BorderSizePixel=0
+	knob.Parent=bar
+	corner(knob,7)
+
+	local drag=false
+
+	bar.InputBegan:Connect(function(i)
+		if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+			drag=true
+		end
+	end)
+
+	UIS.InputEnded:Connect(function(i)
+		if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+			drag=false
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(i)
+		if drag and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
+			local x=math.clamp((i.Position.X-bar.AbsolutePosition.X)/bar.AbsoluteSize.X,0,1)
+			local v=math.floor(min+(max-min)*x+.5)
+
+			t.Text=text.." : "..tostring(v)
+			fill.Size=UDim2.new(x,0,1,0)
+			knob.Position=UDim2.new(x,-7,.5,-7)
+
+			if callback then
+				callback(v)
+			end
+		end
+	end)
+
+	return f
+end
+
+function L:AddDropdown(parent,text,options,callback)
+	local open=false
+	local f=holder(parent,36)
+
+	local b=Instance.new("TextButton")
+	b.Size=UDim2.new(1,-10,1,-6)
+	b.Position=UDim2.fromOffset(5,3)
+	b.BackgroundColor3=L.Theme.M
+	b.Text=text.."  ▼"
+	b.TextColor3=L.Theme.T
+	b.Font=Enum.Font.GothamBold
+	b.TextSize=11
+	b.BorderSizePixel=0
+	b.Parent=f
+	corner(b,7)
+
+	local list=Instance.new("Frame")
+	list.Size=UDim2.new(1,-10,0,0)
+	list.Position=UDim2.fromOffset(5,40)
+	list.BackgroundColor3=L.Theme.M
+	list.BorderSizePixel=0
+	list.Visible=false
+	list.ClipsDescendants=true
+	list.Parent=f
+	corner(list,7)
+
+	local layout=Instance.new("UIListLayout")
+	layout.Padding=UDim.new(0,3)
+	layout.Parent=list
+
+	for _,v in ipairs(options) do
+		local o=Instance.new("TextButton")
+		o.Size=UDim2.new(1,-6,0,28)
+		o.BackgroundColor3=L.Theme.P
+		o.Text=tostring(v)
+		o.TextColor3=L.Theme.T
+		o.Font=Enum.Font.Gotham
+		o.TextSize=10
+		o.BorderSizePixel=0
+		o.Parent=list
+		corner(o,6)
+
+		o.Activated:Connect(function()
+			b.Text=text.."  "..tostring(v)
+
+			if callback then
+				callback(v)
+			end
+
+			open=false
+			tw(list,.18,{Size=UDim2.new(1,-10,0,0)})
+			tw(f,.18,{Size=UDim2.new(1,-8,0,36)})
+
+			task.delay(.18,function()
+				if not open then
+					list.Visible=false
+				end
+			end)
+		end)
+	end
+
+	b.Activated:Connect(function()
+		open=not open
+
+		if open then
+			list.Visible=true
+			local h=#options*31+3
+			tw(list,.2,{Size=UDim2.new(1,-10,0,h)})
+			tw(f,.2,{Size=UDim2.new(1,-8,0,40+h)})
+		else
+			tw(list,.2,{Size=UDim2.new(1,-10,0,0)})
+			tw(f,.2,{Size=UDim2.new(1,-8,0,36)})
+
+			task.delay(.2,function()
+				if not open then
+					list.Visible=false
+				end
+			end)
+		end
+	end)
+
+	return f
+end
+
+function L:AddColorPicker(parent,text,color,callback)
+	local open=false
+	local f=holder(parent,36)
+
+	local b=Instance.new("TextButton")
+	b.Size=UDim2.new(1,-10,0,30)
+	b.Position=UDim2.fromOffset(5,3)
+	b.BackgroundColor3=L.Theme.M
+	b.Text=text
+	b.TextColor3=L.Theme.T
+	b.Font=Enum.Font.GothamBold
+	b.TextSize=11
+	b.BorderSizePixel=0
+	b.Parent=f
+	corner(b,7)
+
+	local preview=Instance.new("Frame")
+	preview.Size=UDim2.fromOffset(24,18)
+	preview.Position=UDim2.new(1,-35,.5,-9)
+	preview.BackgroundColor3=color
+	preview.BorderSizePixel=0
+	preview.Parent=b
+	corner(preview,5)
+
+	local box=Instance.new("Frame")
+	box.Size=UDim2.new(1,-10,0,0)
+	box.Position=UDim2.fromOffset(5,40)
+	box.BackgroundColor3=L.Theme.M
+	box.BorderSizePixel=0
+	box.Visible=false
+	box.ClipsDescendants=true
+	box.Parent=f
+	corner(box,8)
+
+	local info=Instance.new("TextLabel")
+	info.Size=UDim2.new(1,-12,0,22)
+	info.Position=UDim2.fromOffset(6,5)
+	info.BackgroundTransparency=1
+	info.Text="RGB Color Picker"
+	info.TextColor3=L.Theme.T
+	info.Font=Enum.Font.GothamBold
+	info.TextSize=11
+	info.TextXAlignment=Enum.TextXAlignment.Left
+	info.Parent=box
+
+	local inputs={}
+	local names={"R","G","B"}
+
+	for i,n in ipairs(names) do
+		local tb=Instance.new("TextBox")
+		tb.Size=UDim2.new(.3,-2,0,30)
+		tb.Position=UDim2.new((i-1)*.34,6,0,32)
+		tb.BackgroundColor3=L.Theme.P
+		tb.Text=n
+		tb.PlaceholderText=n
+		tb.TextColor3=L.Theme.T
+		tb.Font=Enum.Font.Gotham
+		tb.TextSize=11
+		tb.ClearTextOnFocus=false
+		tb.BorderSizePixel=0
+		tb.Parent=box
+		corner(tb,6)
+		inputs[n]=tb
+	end
+
+	local apply=Instance.new("TextButton")
+	apply.Size=UDim2.new(.48,-7,0,30)
+	apply.Position=UDim2.new(0,6,0,68)
+	apply.BackgroundColor3=L.Theme.T
+	apply.Text="APPLY RGB"
+	apply.TextColor3=L.Theme.M
+	apply.Font=Enum.Font.GothamBold
+	apply.TextSize=10
+	apply.BorderSizePixel=0
+	apply.Parent=box
+	corner(apply,6)
+
+	local reset=Instance.new("TextButton")
+	reset.Size=UDim2.new(.48,-7,0,30)
+	reset.Position=UDim2.new(.52,1,0,68)
+	reset.BackgroundColor3=L.Theme.P
+	reset.Text="RESET"
+	reset.TextColor3=L.Theme.T
+	reset.Font=Enum.Font.GothamBold
+	reset.TextSize=10
+	reset.BorderSizePixel=0
+	reset.Parent=box
+	corner(reset,6)
+
+	local function setColor(c)
+		color=c
+		preview.BackgroundColor3=c
+
+		if callback then
+			callback(c)
+		end
+	end
+
+	apply.Activated:Connect(function()
+		local r=math.clamp(tonumber(inputs.R.Text) or 255,0,255)
+		local g=math.clamp(tonumber(inputs.G.Text) or 255,0,255)
+		local bl=math.clamp(tonumber(inputs.B.Text) or 255,0,255)
+
+		setColor(Color3.fromRGB(r,g,bl))
+	end)
+
+	reset.Activated:Connect(function()
+		inputs.R.Text="255"
+		inputs.G.Text="255"
+		inputs.B.Text="255"
+		setColor(Color3.new(1,1,1))
+	end)
+
+	b.Activated:Connect(function()
+		open=not open
+
+		if open then
+			box.Visible=true
+			tw(box,.22,{Size=UDim2.new(1,-10,0,105)})
+			tw(f,.22,{Size=UDim2.new(1,-8,0,149)})
+		else
+			tw(box,.22,{Size=UDim2.new(1,-10,0,0)})
+			tw(f,.22,{Size=UDim2.new(1,-8,0,36)})
+
+			task.delay(.22,function()
+				if not open then
+					box.Visible=false
+				end
+			end)
+		end
+	end)
+
+	return f
+end
+
+function L:Notify(text,duration)
+	local n=Instance.new("Frame")
+	n.Size=UDim2.fromOffset(230,48)
+	n.Position=UDim2.new(1,10,1,-60)
+	n.BackgroundColor3=L.Theme.P
+	n.BorderSizePixel=0
+	n.Parent=G
+	corner(n,9)
+
+	local t=Instance.new("TextLabel")
+	t.Size=UDim2.new(1,-16,1,0)
+	t.Position=UDim2.fromOffset(8,0)
+	t.BackgroundTransparency=1
+	t.Text=text
+	t.TextColor3=L.Theme.T
+	t.Font=Enum.Font.Gotham
+	t.TextSize=11
+	t.TextXAlignment=Enum.TextXAlignment.Left
+	t.Parent=n
+
+	tw(n,.25,{Position=UDim2.new(1,-240,1,-60)})
+
+	task.delay(duration or 2,function()
+		tw(n,.25,{Position=UDim2.new(1,10,1,-60)})
+		task.wait(.25)
 		n:Destroy()
 	end)
 end
 
-function UI:ToggleUI()
-	GUI.Enabled=not GUI.Enabled
-end
+local function applyTheme()
+	Main.BackgroundColor3=L.Theme.M
+	Top.BackgroundColor3=L.Theme.P
+	Cover.BackgroundColor3=L.Theme.P
+	Title.TextColor3=L.Theme.T
+	Sub.TextColor3=L.Theme.S
 
-function UI:SetVisible(v)
-	GUI.Enabled=v==true
-end
-
-function UI:SetTheme(name)
-	local t=Themes[name]
-
-	if not t then
-		return
+	for _,b in pairs(TabsList) do
+		b.BackgroundColor3=L.Theme.M
+		b.TextColor3=L.Theme.T
 	end
 
-	for _,o in ipairs(ThemeObjects) do
-		if o and o.Parent then
-			local k=o:GetAttribute("YTheme")
-
-			if k=="M" then
-				o.BackgroundColor3=C(t[1],t[2],t[3])
-			elseif k=="P" then
-				o.BackgroundColor3=C(t[4],t[5],t[6])
-			elseif k=="A" then
-				o.BackgroundColor3=C(t[7],t[8],t[9])
-			elseif k=="T" then
-				o.TextColor3=C(t[10],t[11],t[12])
-			elseif k=="S" then
-				o.TextColor3=C(t[13],t[14],t[15])
-			end
+	for p,b in pairs(TabsList) do
+		if p==currentPage then
+			b.BackgroundColor3=L.Theme.T
+			b.TextColor3=L.Theme.M
 		end
 	end
 end
+
+function L:SetTheme(name)
+	if Themes[name] then
+		L.Theme=Themes[name]
+		applyTheme()
+	end
+end
+
+local MainPage=L:AddTab("Main")
+local SettingsPage=L:AddTab("Settings")
+
+local minimized=false
+local maximized=false
+local normalSize=UDim2.fromOffset(400,300)
+
+Min.Activated:Connect(function()
+	minimized=not minimized
+
+	if minimized then
+		Content.Visible=false
+		tw(Main,.2,{Size=UDim2.fromOffset(400,48)})
+	else
+		Content.Visible=true
+		tw(Main,.2,{Size=normalSize})
+	end
+end)
+
+Max.Activated:Connect(function()
+	if minimized then
+		minimized=false
+		Content.Visible=true
+	end
+
+	maximized=not maximized
+
+	if maximized then
+		tw(Main,.25,{
+			Size=UDim2.new(.85,0,.8,0),
+			Position=UDim2.new(.075,0,.1,0)
+		})
+	else
+		tw(Main,.25,{
+			Size=normalSize,
+			Position=UDim2.new(.5,-200,.5,-150)
+		})
+	end
+end)
+
+Close.Activated:Connect(function()
+	G:Destroy()
+end)
+
+local listening=false
+
+Key.Activated:Connect(function()
+	if listening then return end
+
+	listening=true
+	Key.Text="..."
+
+	local c
+
+	c=UIS.InputBegan:Connect(function(i,gp)
+		if gp then return end
+
+		if i.UserInputType==Enum.UserInputType.Keyboard then
+			Key.Text=i.KeyCode.Name
+			listening=false
+			c:Disconnect()
+		end
+	end)
+end)
 
 local dragging=false
 local dragStart
@@ -905,20 +754,7 @@ Top.InputBegan:Connect(function(i)
 	if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
 		dragging=true
 		dragStart=i.Position
-		startPos=W.Position
-	end
-end)
-
-UIS.InputChanged:Connect(function(i)
-	if dragging and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
-		local d=i.Position-dragStart
-
-		W.Position=UDim2.new(
-			startPos.X.Scale,
-			startPos.X.Offset+d.X,
-			startPos.Y.Scale,
-			startPos.Y.Offset+d.Y
-		)
+		startPos=Main.Position
 	end
 end)
 
@@ -928,47 +764,15 @@ UIS.InputEnded:Connect(function(i)
 	end
 end)
 
-local minimized=false
-local maximized=false
+UIS.InputChanged:Connect(function(i)
+	if dragging and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
+		local d=i.Position-dragStart
 
-Min.MouseButton1Click:Connect(function()
-	minimized=not minimized
-
-	Tabs.Visible=not minimized
-	Pages.Visible=not minimized
-
-	if minimized then
-		TS:Create(W,TweenInfo.new(.2),{
-			Size=UDim2.fromOffset(340,50)
-		}):Play()
-	else
-		TS:Create(W,TweenInfo.new(.2),{
-			Size=UDim2.new(0.584,0,0.857,0)
-		}):Play()
+		Main.Position=UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset+d.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset+d.Y
+		)
 	end
 end)
-
-Max.MouseButton1Click:Connect(function()
-	if minimized then
-		minimized=false
-		Tabs.Visible=true
-		Pages.Visible=true
-	end
-
-	maximized=not maximized
-
-	if maximized then
-		TS:Create(W,TweenInfo.new(.25,Enum.EasingStyle.Quint),{
-			Size=UDim2.new(.9,0,.82,0),
-			Position=UDim2.new(.05,0,.08,0)
-		}):Play()
-	else
-		TS:Create(W,TweenInfo.new(.25,Enum.EasingStyle.Quint),{
-			Size=UDim2.new(0.584,0,0.857,0),
-			Position=UDim2.new(0.195,0,0.074,0)
-		}):Play()
-	end
-end)
-
-Close.MouseButton1Click:Connect(function()
-	GUI.Enabled=fal
