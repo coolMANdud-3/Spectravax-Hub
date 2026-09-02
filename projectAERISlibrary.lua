@@ -776,3 +776,8 @@ UIS.InputChanged:Connect(function(i)
 		)
 	end
 end)
+
+L.MainPage=MainPage
+L.SettingsPage=SettingsPage
+
+return L
